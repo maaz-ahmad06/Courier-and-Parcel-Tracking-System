@@ -11,6 +11,7 @@ import TrackPage from '../pages/public/TrackPage';
 import BookingPage from '../pages/public/BookingPage';
 import CalculatorPage from '../pages/public/CalculatorPage';
 import ServicesPage from '../pages/public/ServicesPage';
+import AboutPage from '../pages/public/AboutPage';
 import ContactPage from '../pages/public/ContactPage';
 import NotFoundPage from '../pages/public/NotFoundPage';
 
@@ -44,6 +45,7 @@ export default function AppRoutes() {
         <Route path="/book" element={<BookingPage />} />
         <Route path="/calculator" element={<CalculatorPage />} />
         <Route path="/services" element={<ServicesPage />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
