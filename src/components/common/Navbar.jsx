@@ -3,13 +3,12 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Package, Search, Menu, X, ArrowRight, Truck, 
-  LayoutDashboard, Navigation, Sparkles, User, ChevronRight
+  LayoutDashboard, Navigation, Sparkles, ChevronRight
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const [quickTrackId, setQuickTrackId] = useState('');
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
@@ -19,7 +18,6 @@ export default function Navbar() {
     if (quickTrackId.trim()) {
       navigate(`/track?id=${encodeURIComponent(quickTrackId.trim())}`);
       setQuickTrackId('');
-      setSearchOpen(false);
       setMobileMenuOpen(false);
     }
   };
@@ -34,35 +32,37 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#0b0f19]/90 backdrop-blur-xl border-b border-slate-800/80 transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 gap-4">
+    <header className="sticky top-0 z-40 w-full bg-[#0b0f19]/95 backdrop-blur-2xl border-b border-slate-800/80 shadow-lg shadow-black/20">
+      <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-12">
+        <div className="flex items-center justify-between h-20">
           
-          {/* ================= BRAND LOGO ================= */}
-          <Link to="/" className="flex items-center gap-3 shrink-0 group py-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/25 group-hover:scale-105 transition-transform shrink-0">
-              <Package className="w-5 h-5 text-white" />
-            </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1 font-heading font-black text-xl tracking-tight text-white leading-none">
-                <span>SWIFT</span>
-                <span className="text-orange-500">TRACK</span>
+          {/* ================= 1. LEFT: LOGO SECTION ================= */}
+          <div className="flex items-center shrink-0">
+            <Link to="/" className="flex items-center gap-3 group py-2">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:scale-105 transition-transform shrink-0 ring-1 ring-white/10">
+                <Package className="w-6 h-6 text-white" />
               </div>
-              <span className="text-[9px] uppercase font-bold tracking-widest text-slate-400 mt-1">Parcel Logistics</span>
-            </div>
-          </Link>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1 font-heading font-black text-xl sm:text-2xl tracking-tight text-white leading-none">
+                  <span>SWIFT</span>
+                  <span className="text-orange-500">TRACK</span>
+                </div>
+                <span className="text-[9px] uppercase font-bold tracking-widest text-slate-400 mt-1">Parcel Logistics</span>
+              </div>
+            </Link>
+          </div>
 
-          {/* ================= DESKTOP NAVIGATION LINKS ================= */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
+          {/* ================= 2. CENTER: NAV LINKS (SPACED & CENTERED) ================= */}
+          <nav className="hidden lg:flex items-center justify-center flex-1 mx-6 xl:mx-10 gap-1.5 xl:gap-3">
             {navItems.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) =>
-                  `px-3.5 py-2 rounded-xl text-xs xl:text-sm font-semibold transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                  `px-3.5 py-2 rounded-xl text-xs xl:text-sm font-semibold transition-all whitespace-nowrap ${
                     isActive
-                      ? 'text-orange-400 bg-orange-500/10 font-bold border border-orange-500/20'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                      ? 'text-orange-400 bg-orange-500/10 font-bold border border-orange-500/25 shadow-sm'
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800/70'
                   }`
                 }
               >
@@ -71,17 +71,17 @@ export default function Navbar() {
             ))}
           </nav>
 
-          {/* ================= RIGHT ACTIONS (DESKTOP) ================= */}
+          {/* ================= 3. RIGHT: SEARCH, TRACK NOW & ADMIN ================= */}
           <div className="hidden md:flex items-center gap-3 shrink-0">
             
-            {/* Quick Track Input Bar with Built-in Button */}
+            {/* Quick Track Input Bar */}
             <form onSubmit={handleQuickTrack} className="relative flex items-center">
               <input
                 type="text"
                 placeholder="Track ID (TRK-...)"
                 value={quickTrackId}
                 onChange={(e) => setQuickTrackId(e.target.value)}
-                className="w-40 xl:w-48 pl-8 pr-8 py-2 text-xs bg-slate-900/90 border border-slate-700/90 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all font-mono"
+                className="w-36 xl:w-44 pl-8 pr-7 py-2 text-xs bg-slate-900/90 border border-slate-700/80 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all font-mono"
               />
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
               {quickTrackId ? (
@@ -94,20 +94,20 @@ export default function Navbar() {
               ) : null}
             </form>
 
-            {/* Highlighted 'Track Now' Button */}
+            {/* Highlighted 'Track Now' CTA */}
             <Link
               to="/track"
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-heading font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 rounded-xl shadow-lg shadow-orange-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-heading font-bold text-white bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-600 rounded-xl shadow-lg shadow-orange-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap"
             >
               <Navigation className="w-3.5 h-3.5" />
               <span>Track Now</span>
             </Link>
 
-            {/* Admin Switcher Pill */}
+            {/* Admin Switcher */}
             <Link
               to={isAuthenticated ? "/admin/dashboard" : "/admin/login"}
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 rounded-xl transition-all whitespace-nowrap"
-              title="Open Admin Operations Portal"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 rounded-xl transition-all whitespace-nowrap"
+              title="Admin Portal"
             >
               <LayoutDashboard className="w-3.5 h-3.5 text-orange-400" />
               <span>Admin</span>
@@ -117,7 +117,7 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* ================= MOBILE CONTROLS ================= */}
+          {/* ================= MOBILE HAMBURGER ================= */}
           <div className="flex md:hidden items-center gap-2">
             <Link
               to="/track"
