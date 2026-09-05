@@ -1,14 +1,144 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { 
   Package, Search, ArrowRight, Truck, ShieldCheck, Zap, Globe, 
   Clock, MapPin, CheckCircle2, TrendingUp, Sparkles, Navigation,
   Plane, Boxes, Award, PhoneCall, ChevronRight, ChevronLeft, 
-  Calculator, Star, Quote, Building2, Layers, Headphones
+  Calculator, Star, Quote, Building2, Layers, Headphones, ThermometerSnowflake
 } from 'lucide-react';
 import { LOGISTICS_SERVICES, CITIES_LIST } from '../../data/servicesData';
 import { useParcels } from '../../context/ParcelContext';
+
+// Icon Helper
+function getServiceIcon(id) {
+  switch (id) {
+    case 'express-air': return <Plane className="w-7 h-7" />;
+    case 'standard-ground': return <Truck className="w-7 h-7" />;
+    case 'same-day-city': return <Zap className="w-7 h-7" />;
+    case 'cold-chain': return <ThermometerSnowflake className="w-7 h-7" />;
+    case 'heavy-freight': return <Boxes className="w-7 h-7" />;
+    case 'international-courier': return <Globe className="w-7 h-7" />;
+    default: return <Truck className="w-7 h-7" />;
+  }
+}
+
+// ================= HORIZONTAL SCROLL-TRIGGERED SERVICES COMPONENT =================
+function HorizontalServicesSection() {
+  const targetRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ["start start", "end end"]
+  });
+
+  // Smooth scroll translation from 0% to -62%
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-62%"]);
+
+  return (
+    <section ref={targetRef} className="relative h-[240vh] bg-[#070b14]/60">
+      <div className="sticky top-20 flex flex-col justify-center overflow-hidden py-10">
+        
+        {/* Section Header */}
+        <div className="w-full px-6 lg:px-12 mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/25 text-orange-400 text-xs font-bold uppercase tracking-widest mb-2">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Scroll-Driven Fleet Showcase</span>
+            </div>
+            <h2 className="font-heading font-black text-3xl sm:text-5xl text-white">
+              Precision Delivery Services
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-400 mt-1">
+              Scroll down to glide horizontally through all 6 multimodal transportation & freight tiers.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:flex items-center gap-2 text-xs text-orange-400/90 font-mono bg-slate-900/90 px-3 py-1.5 rounded-xl border border-slate-800">
+              <Navigation className="w-3.5 h-3.5 animate-spin" />
+              <span>Scroll Down ↓ to Glide Horizontally →</span>
+            </div>
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-orange-400 border border-slate-700 transition-colors"
+            >
+              <span>Full Catalog</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        </div>
+
+        {/* Horizontal Sliding Cards Track */}
+        <div className="w-full overflow-hidden">
+          <motion.div style={{ x }} className="flex gap-6 pl-6 lg:pl-12 pr-12 w-max">
+            {LOGISTICS_SERVICES.map((service, index) => (
+              <motion.div
+                key={service.id}
+                whileHover={{ y: -6, scale: 1.01 }}
+                transition={{ duration: 0.2 }}
+                className="w-[330px] sm:w-[380px] lg:w-[410px] glass-panel rounded-3xl p-7 flex flex-col justify-between border border-slate-800 hover:border-orange-500/40 hover:shadow-2xl shadow-xl transition-all group shrink-0"
+              >
+                <div>
+                  <div className="flex justify-between items-start mb-6">
+                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${service.color} flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-transform`}>
+                      {getServiceIcon(service.id)}
+                    </div>
+                    <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-slate-900 text-orange-400 border border-slate-700 font-mono">
+                      0{index + 1} / {service.badge}
+                    </span>
+                  </div>
+
+                  <h3 className="font-heading font-bold text-2xl text-white mb-2 group-hover:text-orange-400 transition-colors">
+                    {service.title}
+                  </h3>
+                  <p className="text-xs text-slate-400 mb-6 leading-relaxed min-h-[32px]">{service.tagline}</p>
+
+                  <div className="space-y-2.5 mb-6 text-xs text-slate-300">
+                    {service.features.slice(0, 3).map((feat, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <span className="truncate">{feat}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-5 border-t border-slate-800/80 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] text-slate-400 block font-semibold uppercase tracking-wider">Transit Speed</span>
+                    <span className="text-sm font-bold text-white font-mono">{service.deliveryTime}</span>
+                  </div>
+                  <Link
+                    to={`/book?service=${service.id}`}
+                    className="px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-slate-800 hover:bg-orange-500 transition-colors flex items-center gap-1.5 shadow-md"
+                  >
+                    <span>Book Tier</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Scroll Progress Bar at bottom */}
+        <div className="w-full px-6 lg:px-12 mt-8">
+          <div className="flex justify-between items-center text-[10px] font-mono text-slate-400 mb-1.5">
+            <span>Scroll Gallery Progress</span>
+            <span className="text-orange-400 font-bold">6 Logistics Solutions</span>
+          </div>
+          <div className="h-1.5 w-full bg-slate-800/80 rounded-full overflow-hidden p-0.5 border border-slate-700/50">
+            <motion.div
+              style={{ scaleX: scrollYProgress, transformOrigin: "left" }}
+              className="h-full bg-gradient-to-r from-orange-500 via-amber-400 to-orange-500 rounded-full shadow-md shadow-orange-500/50"
+            />
+          </div>
+        </div>
+
+      </div>
+    </section>
+  );
+}
 
 export default function HomePage() {
   const [trackingInput, setTrackingInput] = useState('');
@@ -255,82 +385,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ================= STEP 7: SERVICES SECTION (SCROLL TRIGGER & HOVER LIFT) ================= */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-          <div>
-            <span className="text-orange-400 text-xs uppercase font-bold tracking-widest">End-To-End Logistics</span>
-            <h2 className="font-heading font-black text-3xl sm:text-5xl text-white mt-1">
-              Precision Delivery Services
-            </h2>
-          </div>
-          <Link
-            to="/services"
-            className="inline-flex items-center gap-2 text-xs font-bold text-orange-400 hover:text-orange-300"
-          >
-            <span>Explore All Logistics Tiers</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {LOGISTICS_SERVICES.map((service, index) => (
-            <motion.div
-              key={service.id}
-              initial={{ opacity: 0, y: 25 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              whileHover={{ y: -8 }}
-              transition={{ duration: 0.4, delay: index * 0.08 }}
-              className="glass-panel rounded-3xl p-8 flex flex-col justify-between border border-slate-800 hover:border-slate-700 hover:shadow-2xl transition-all group"
-            >
-              <div>
-                <div className="flex justify-between items-start mb-6">
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${service.color} flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-transform`}>
-                    {service.id === 'express-air' && <Plane className="w-7 h-7" />}
-                    {service.id === 'standard-ground' && <Truck className="w-7 h-7" />}
-                    {service.id === 'same-day-city' && <Zap className="w-7 h-7" />}
-                    {service.id === 'cold-chain' && <ShieldCheck className="w-7 h-7" />}
-                    {service.id === 'heavy-freight' && <Boxes className="w-7 h-7" />}
-                    {service.id === 'international-courier' && <Globe className="w-7 h-7" />}
-                  </div>
-                  <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-slate-900 text-orange-400 border border-slate-700">
-                    {service.badge}
-                  </span>
-                </div>
-
-                <h3 className="font-heading font-bold text-2xl text-white mb-2 group-hover:text-orange-400 transition-colors">
-                  {service.title}
-                </h3>
-                <p className="text-xs text-slate-400 mb-6 leading-relaxed">{service.tagline}</p>
-
-                <div className="space-y-2.5 mb-6 text-xs text-slate-300">
-                  {service.features.slice(0, 3).map((feat, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                      <span>{feat}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="pt-6 border-t border-slate-800/80 flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] text-slate-400 block font-semibold uppercase">Transit Time</span>
-                  <span className="text-sm font-bold text-white">{service.deliveryTime}</span>
-                </div>
-                <Link
-                  to={`/book?service=${service.id}`}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-slate-800 hover:bg-orange-500 transition-colors flex items-center gap-1.5"
-                >
-                  <span>Book Tier</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+      {/* ================= STEP 7: HORIZONTAL SCROLL-TRIGGERED SERVICES SECTION ================= */}
+      <HorizontalServicesSection />
 
       {/* ================= STEP 8: PRICING / RATE CALCULATOR SECTION ================= */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
