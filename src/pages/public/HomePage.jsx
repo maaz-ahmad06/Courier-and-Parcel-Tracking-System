@@ -35,26 +35,26 @@ function HorizontalServicesSection() {
   const x = useTransform(scrollYProgress, [0, 1], ["0%", "-62%"]);
 
   return (
-    <section ref={targetRef} className="relative h-[240vh] bg-[#070b14]/60">
-      <div className="sticky top-20 flex flex-col justify-center overflow-hidden py-10">
+    <section ref={targetRef} className="relative h-[250vh] bg-[#070b14]/60">
+      <div className="sticky top-20 h-[calc(100vh-5rem)] flex flex-col justify-center overflow-hidden py-2 sm:py-4">
         
         {/* Section Header */}
-        <div className="w-full px-6 lg:px-12 mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div className="w-full px-6 lg:px-12 mb-4 sm:mb-6 flex flex-col md:flex-row md:items-end justify-between gap-3">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/25 text-orange-400 text-xs font-bold uppercase tracking-widest mb-2">
+            <div className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-orange-500/10 border border-orange-500/25 text-orange-400 text-[11px] font-bold uppercase tracking-widest mb-1.5">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Scroll-Driven Fleet Showcase</span>
             </div>
-            <h2 className="font-heading font-black text-3xl sm:text-5xl text-white">
+            <h2 className="font-heading font-black text-2xl sm:text-4xl text-white">
               Precision Delivery Services
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1">
+            <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
               Scroll down to glide horizontally through all 6 multimodal transportation & freight tiers.
             </p>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-2 text-xs text-orange-400/90 font-mono bg-slate-900/90 px-3 py-1.5 rounded-xl border border-slate-800">
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-2 text-xs text-orange-400/90 font-mono bg-slate-900/90 px-3 py-1.5 rounded-xl border border-slate-800 shadow-inner">
               <Navigation className="w-3.5 h-3.5 animate-spin" />
               <span>Scroll Down ↓ to Glide Horizontally →</span>
             </div>
@@ -76,11 +76,11 @@ function HorizontalServicesSection() {
                 key={service.id}
                 whileHover={{ y: -6, scale: 1.01 }}
                 transition={{ duration: 0.2 }}
-                className="w-[330px] sm:w-[380px] lg:w-[410px] glass-panel rounded-3xl p-7 flex flex-col justify-between border border-slate-800 hover:border-orange-500/40 hover:shadow-2xl shadow-xl transition-all group shrink-0"
+                className="w-[310px] sm:w-[360px] lg:w-[390px] glass-panel rounded-3xl p-6 flex flex-col justify-between border border-slate-800 hover:border-orange-500/40 hover:shadow-2xl shadow-xl transition-all group shrink-0"
               >
                 <div>
-                  <div className="flex justify-between items-start mb-6">
-                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${service.color} flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-transform`}>
+                  <div className="flex justify-between items-start mb-4">
+                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${service.color} flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-transform`}>
                       {getServiceIcon(service.id)}
                     </div>
                     <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-slate-900 text-orange-400 border border-slate-700 font-mono">
@@ -88,12 +88,12 @@ function HorizontalServicesSection() {
                     </span>
                   </div>
 
-                  <h3 className="font-heading font-bold text-2xl text-white mb-2 group-hover:text-orange-400 transition-colors">
+                  <h3 className="font-heading font-bold text-xl sm:text-2xl text-white mb-1.5 group-hover:text-orange-400 transition-colors">
                     {service.title}
                   </h3>
-                  <p className="text-xs text-slate-400 mb-6 leading-relaxed min-h-[32px]">{service.tagline}</p>
+                  <p className="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2 min-h-[32px]">{service.tagline}</p>
 
-                  <div className="space-y-2.5 mb-6 text-xs text-slate-300">
+                  <div className="space-y-2 mb-4 text-xs text-slate-300">
                     {service.features.slice(0, 3).map((feat, i) => (
                       <div key={i} className="flex items-center gap-2">
                         <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -103,14 +103,14 @@ function HorizontalServicesSection() {
                   </div>
                 </div>
 
-                <div className="pt-5 border-t border-slate-800/80 flex items-center justify-between">
+                <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between">
                   <div>
                     <span className="text-[10px] text-slate-400 block font-semibold uppercase tracking-wider">Transit Speed</span>
-                    <span className="text-sm font-bold text-white font-mono">{service.deliveryTime}</span>
+                    <span className="text-xs sm:text-sm font-bold text-white font-mono">{service.deliveryTime}</span>
                   </div>
                   <Link
                     to={`/book?service=${service.id}`}
-                    className="px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-slate-800 hover:bg-orange-500 transition-colors flex items-center gap-1.5 shadow-md"
+                    className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-slate-800 hover:bg-orange-500 transition-colors flex items-center gap-1.5 shadow-md"
                   >
                     <span>Book Tier</span>
                     <ChevronRight className="w-3.5 h-3.5" />
@@ -122,7 +122,7 @@ function HorizontalServicesSection() {
         </div>
 
         {/* Scroll Progress Bar at bottom */}
-        <div className="w-full px-6 lg:px-12 mt-8">
+        <div className="w-full px-6 lg:px-12 mt-4 sm:mt-6">
           <div className="flex justify-between items-center text-[10px] font-mono text-slate-400 mb-1.5">
             <span>Scroll Gallery Progress</span>
             <span className="text-orange-400 font-bold">6 Logistics Solutions</span>
