@@ -59,8 +59,9 @@ function HorizontalServicesSection() {
     offset: ["start start", "end end"]
   });
 
-  // Smooth scroll translation dynamically calculated to stop exactly at the last card
-  const x = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
+  // Smooth scroll translation starts when cards reach the center of viewport (0.08 through 0.92)
+  const x = useTransform(scrollYProgress, [0.08, 0.92], [0, -scrollRange]);
+  const progressScale = useTransform(scrollYProgress, [0.08, 0.92], [0, 1]);
 
   return (
     <section ref={targetRef} className="relative h-[240vh] bg-[#070b14]/60">
@@ -157,7 +158,7 @@ function HorizontalServicesSection() {
           </div>
           <div className="h-1.5 w-full bg-slate-800/80 rounded-full overflow-hidden p-0.5 border border-slate-700/50">
             <motion.div
-              style={{ scaleX: scrollYProgress, transformOrigin: "left" }}
+              style={{ scaleX: progressScale, transformOrigin: "left" }}
               className="h-full bg-gradient-to-r from-orange-500 via-amber-400 to-orange-500 rounded-full shadow-md shadow-orange-500/50"
             />
           </div>
