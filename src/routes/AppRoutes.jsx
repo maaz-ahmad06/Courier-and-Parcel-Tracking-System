@@ -20,7 +20,9 @@ import AdminLoginPage from '../pages/admin/AdminLoginPage';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import AdminParcelsPage from '../pages/admin/AdminParcelsPage';
 import AdminNewShipmentPage from '../pages/admin/AdminNewShipmentPage';
-import AdminAnalyticsPage from '../pages/admin/AdminAnalyticsPage';
+import AdminCustomersPage from '../pages/admin/AdminCustomersPage';
+import AdminBranchesPage from '../pages/admin/AdminBranchesPage';
+import AdminReportsPage from '../pages/admin/AdminReportsPage';
 import AdminSettingsPage from '../pages/admin/AdminSettingsPage';
 
 // Auth Hook
@@ -66,7 +68,9 @@ export default function AppRoutes() {
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="parcels" element={<AdminParcelsPage />} />
         <Route path="new-shipment" element={<AdminNewShipmentPage />} />
-        <Route path="analytics" element={<AdminAnalyticsPage />} />
+        <Route path="customers" element={<AdminCustomersPage />} />
+        <Route path="branches" element={<AdminBranchesPage />} />
+        <Route path="reports" element={<AdminReportsPage />} />
         <Route path="settings" element={<AdminSettingsPage />} />
       </Route>
     </Routes>

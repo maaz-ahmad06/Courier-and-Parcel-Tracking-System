@@ -3,7 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   PlusCircle, Truck, Package, User, MapPin, 
-  ArrowLeft, CheckCircle2, ShieldCheck, DollarSign 
+  ArrowLeft, CheckCircle2, ShieldCheck, DollarSign,
+  Sparkles, AlertTriangle
 } from 'lucide-react';
 import { LOGISTICS_SERVICES, CITIES_LIST } from '../../data/servicesData';
 import { useParcels } from '../../context/ParcelContext';
@@ -41,6 +42,11 @@ export default function AdminNewShipmentPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (!formData.senderName || !formData.recipientName || !formData.weight) {
+      addToast('Please fill in required shipper, recipient, and parcel weight.', 'error');
+      return;
+    }
+
     const selectedService = LOGISTICS_SERVICES.find(s => s.id === formData.serviceType) || LOGISTICS_SERVICES[0];
 
     const newPkg = addParcel({
@@ -77,14 +83,14 @@ export default function AdminNewShipmentPage() {
       courier: {
         name: formData.courierName,
         phone: formData.courierPhone,
-        badge: 'SwiftTrack Assigned Logistics',
+        badge: 'SwiftTrack Assigned Fleet',
         vehicle: 'Mercedes Sprinter Van #401',
         rating: 4.95,
         photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80'
       }
     });
 
-    addToast(`New shipment ${newPkg.trackingNumber} dispatched!`, 'success');
+    addToast(`New shipment ${newPkg.trackingNumber} dispatched successfully!`, 'success');
     navigate('/admin/parcels');
   };
 
@@ -99,13 +105,13 @@ export default function AdminNewShipmentPage() {
             className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white mb-2 transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to Shipments</span>
+            <span>Back to Manage Parcels</span>
           </Link>
-          <h1 className="font-heading font-black text-3xl text-white">
-            Dispatch New Consignment
+          <h1 className="font-heading font-black text-2xl sm:text-3xl text-white">
+            Add New Parcel Shipment
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Create an internal logistics manifest and allocate tracking number.
+            Dispatch a new consignment and automatically generate an Air Waybill tracking ID.
           </p>
         </div>
       </div>
@@ -115,13 +121,13 @@ export default function AdminNewShipmentPage() {
         
         {/* Shipper Details */}
         <div>
-          <h3 className="font-heading font-bold text-base text-orange-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <h3 className="font-heading font-bold text-sm text-orange-400 uppercase tracking-wider mb-4 flex items-center gap-2">
             <User className="w-4 h-4" />
-            <span>1. Sender (Origin)</span>
+            <span>1. Shipper (Sender) Info</span>
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
             <div>
-              <label className="block font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Shipper Name *</label>
+              <label className="block font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Sender Name *</label>
               <input
                 type="text"
                 required
@@ -166,13 +172,13 @@ export default function AdminNewShipmentPage() {
 
         {/* Consignee Details */}
         <div className="pt-6 border-t border-slate-800">
-          <h3 className="font-heading font-bold text-base text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <h3 className="font-heading font-bold text-sm text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
             <MapPin className="w-4 h-4" />
-            <span>2. Recipient (Destination)</span>
+            <span>2. Receiver (Destination) Info</span>
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
             <div>
-              <label className="block font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Recipient Name *</label>
+              <label className="block font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Receiver Name *</label>
               <input
                 type="text"
                 required
@@ -182,7 +188,7 @@ export default function AdminNewShipmentPage() {
               />
             </div>
             <div>
-              <label className="block font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Recipient Phone *</label>
+              <label className="block font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Receiver Phone *</label>
               <input
                 type="text"
                 required
@@ -215,11 +221,11 @@ export default function AdminNewShipmentPage() {
           </div>
         </div>
 
-        {/* Cargo Specs & Service */}
+        {/* Parcel Specs & Service */}
         <div className="pt-6 border-t border-slate-800">
-          <h3 className="font-heading font-bold text-base text-blue-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <h3 className="font-heading font-bold text-sm text-blue-400 uppercase tracking-wider mb-4 flex items-center gap-2">
             <Package className="w-4 h-4" />
-            <span>3. Cargo Parameters & Speed</span>
+            <span>3. Parcel Parameters & Service Tier</span>
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
             <div>
@@ -241,26 +247,28 @@ export default function AdminNewShipmentPage() {
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-orange-500"
               >
-                <option value="Pending">Pending</option>
-                <option value="Picked Up">Picked Up</option>
+                <option value="Pending">Pending (Awaiting Pickup)</option>
+                <option value="Picked Up">Picked Up (At Depot)</option>
                 <option value="In Transit">In Transit</option>
                 <option value="Out for Delivery">Out for Delivery</option>
               </select>
             </div>
             <div>
-              <label className="block font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Weight (kg)</label>
+              <label className="block font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Weight (kg) *</label>
               <input
                 type="number"
                 step="0.1"
+                min="0.1"
                 value={formData.weight}
                 onChange={(e) => setFormData({ ...formData, weight: parseFloat(e.target.value) || 1 })}
                 className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-orange-500 font-mono"
+                required
               />
             </div>
           </div>
         </div>
 
-        {/* Action Button */}
+        {/* Action Buttons */}
         <div className="pt-6 border-t border-slate-800 flex justify-end gap-3">
           <button
             type="button"
@@ -271,10 +279,10 @@ export default function AdminNewShipmentPage() {
           </button>
           <button
             type="submit"
-            className="px-8 py-3 rounded-xl font-heading font-bold text-white bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 shadow-lg shadow-orange-500/25 flex items-center gap-2 cursor-pointer transition-all"
+            className="px-8 py-3.5 rounded-xl font-heading font-black text-white bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 shadow-lg shadow-orange-500/25 flex items-center gap-2 cursor-pointer transition-all text-xs"
           >
             <PlusCircle className="w-4 h-4" />
-            <span>Generate Manifest & Dispatch</span>
+            <span>Dispatch & Generate Tracking ID</span>
           </button>
         </div>
 
