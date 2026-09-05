@@ -26,16 +26,44 @@ function getServiceIcon(id) {
 // ================= HORIZONTAL SCROLL-TRIGGERED SERVICES COMPONENT =================
 function HorizontalServicesSection() {
   const targetRef = useRef(null);
+  const trackRef = useRef(null);
+  const [scrollRange, setScrollRange] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return Math.max(0, (LOGISTICS_SERVICES.length * 400) - window.innerWidth + 32);
+    }
+    return 600;
+  });
+
+  useEffect(() => {
+    const updateScrollRange = () => {
+      if (trackRef.current) {
+        const totalTrackWidth = trackRef.current.scrollWidth;
+        const visibleWidth = window.innerWidth;
+        // Exactly scroll until the last card sits comfortably at the right edge
+        const maxTranslate = Math.max(0, totalTrackWidth - visibleWidth + 32);
+        setScrollRange(maxTranslate);
+      }
+    };
+
+    updateScrollRange();
+    const timer = setTimeout(updateScrollRange, 200);
+    window.addEventListener('resize', updateScrollRange);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', updateScrollRange);
+    };
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: targetRef,
     offset: ["start start", "end end"]
   });
 
-  // Smooth scroll translation from 0% to -62%
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-62%"]);
+  // Smooth scroll translation dynamically calculated to stop exactly at the last card
+  const x = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
 
   return (
-    <section ref={targetRef} className="relative h-[250vh] bg-[#070b14]/60">
+    <section ref={targetRef} className="relative h-[240vh] bg-[#070b14]/60">
       <div className="sticky top-20 h-[calc(100vh-5rem)] flex flex-col justify-center overflow-hidden py-2 sm:py-4">
         
         {/* Section Header */}
@@ -70,7 +98,7 @@ function HorizontalServicesSection() {
 
         {/* Horizontal Sliding Cards Track */}
         <div className="w-full overflow-hidden">
-          <motion.div style={{ x }} className="flex gap-6 pl-6 lg:pl-12 pr-12 w-max">
+          <motion.div ref={trackRef} style={{ x }} className="flex gap-6 pl-6 lg:pl-12 pr-6 lg:pr-12 w-max">
             {LOGISTICS_SERVICES.map((service, index) => (
               <motion.div
                 key={service.id}
